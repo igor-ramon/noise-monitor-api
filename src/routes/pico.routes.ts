@@ -134,7 +134,7 @@ router.post(
 
     if (req.headers["content-type"] === "audio/wav") {
       try {
-        const device =
+        const device: any =
           req.headers["x-device-id"] || req.query.device || "unknown-device";
 
         const filePath = `recordings/${device}_${Date.now()}.wav`;
@@ -143,7 +143,7 @@ router.post(
 
         Logger.warn(`🚨 WAV recebido do device: ${device}`);
 
-        const spectrum = await audioService.processWav(filePath);
+        const spectrum = await audioService.processWav(filePath, device);
 
         return res.json({ ok: true, device, spectrum });
       } catch (err) {

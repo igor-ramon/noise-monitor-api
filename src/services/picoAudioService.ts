@@ -34,7 +34,7 @@ export class PicoAudioService {
 
   private generateSpectrogram(wav: string, png: string) {
     return new Promise<void>((resolve, reject) => {
-
+      
       const ffmpeg = spawn("ffmpeg", [
         "-y",
         "-i", wav,
