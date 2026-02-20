@@ -1,0 +1,11 @@
+{
+  "watch": ["src"],
+  "ext": "ts",
+  "ignore": [
+    "dist",
+    "**/*.tsbuildinfo",
+    "**/*.js",
+    "node_modules"
+  ],
+  "exec": "node --import tsx src/index.ts"
+}
