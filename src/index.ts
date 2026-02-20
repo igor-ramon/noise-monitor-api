@@ -50,10 +50,10 @@ app.listen(PORT, () => {
 });
 
 
-const micService = new MicService();
- process.on("SIGINT", () => {
-   micService.stopMonitoring();
-   process.exit();
- });
- micService.startMonitoring();
+// const micService = new MicService();
+//  process.on("SIGINT", () => {
+//    micService.stopMonitoring();
+//    process.exit();
+//  });
+//  micService.startMonitoring();
 
