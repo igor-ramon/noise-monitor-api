@@ -2,7 +2,6 @@ import { spawn, ChildProcessWithoutNullStreams } from "child_process";
 import fs from "fs";
 import path from "path";
 import FormData from "form-data";
-import fetch from "node-fetch";
 import { Logger } from "../utils/Logger";
 import { FFmpegUtils } from "../utils/FFmpegUtils";
 
@@ -31,7 +30,7 @@ export class MicService {
 
     try {
       if (spectrumFile) {
-        const form = new FormData();
+        const form: any = new FormData();
         form.append("level", db.toString());
         form.append("timestamp", new Date().toISOString());
         form.append("spectrum", fs.createReadStream(spectrumFile));
