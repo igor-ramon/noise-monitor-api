@@ -21,7 +21,6 @@
 //   }
 // });
 
-
 // export default router;
 
 // import { Router } from "express";
@@ -52,7 +51,6 @@
 // });
 
 // export default router;
-
 
 import { Router } from "express";
 import multer from "multer";
@@ -99,8 +97,28 @@ const upload = multer({
 
 import fs from "fs";
 import express from "express";
-// import upload from "../middlewares/upload"; // seu multer
-// import Logger from "../utils/logger";
+
+router.get("/recordings/:file", (req, res) => {
+  try {
+    const fileName = req.params.file;
+
+    // evita path traversal (segurança básica)
+    if (fileName.includes("..")) {
+      return res.status(400).send("Invalid filename");
+    }
+
+    const filePath = path.resolve("recordings", fileName);
+
+    if (!fs.existsSync(filePath)) {
+      return res.status(404).send("File not found");
+    }
+
+    res.download(filePath);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Error downloading file");
+  }
+});
 
 router.post(
   "/pico-alert",
@@ -114,23 +132,20 @@ router.post(
       return next();
     }
 
-    // Se for RAW (Pico)
     if (req.headers["content-type"] === "audio/wav") {
       try {
-        const device = req.query.device || "pico";
+        const device =
+          req.headers["x-device-id"] || req.query.device || "unknown-device";
 
-        const filePath = `recordings/pico_${Date.now()}.wav`;
+        const filePath = `recordings/${device}_${Date.now()}.wav`;
 
         fs.writeFileSync(filePath, req.body);
 
-        Logger.warn(`🚨 RAW WAV recebido do Pico: ${device}`);
+        Logger.warn(`🚨 WAV recebido do device: ${device}`);
 
-        const spectrum = await audioService.processWav(
-          filePath,
-          // device
-        );
+        const spectrum = await audioService.processWav(filePath);
 
-        return res.json({ ok: true, spectrum });
+        return res.json({ ok: true, device, spectrum });
       } catch (err) {
         Logger.error("Error receiving RAW WAV", err);
         return res.status(500).json({ error: "internal error" });
@@ -155,20 +170,14 @@ router.post(
 
       Logger.warn(`🚨 Multipart WAV recebido do Pico: ${device}`);
 
-      const spectrum = await audioService.processWav(
-        req.file.path,
-        device
-      );
+      const spectrum = await audioService.processWav(req.file.path, device);
 
       res.json({ ok: true, spectrum });
-
     } catch (err) {
       Logger.error("Error receiving WAV", err);
       res.status(500).json({ error: "internal error" });
     }
-  }
+  },
 );
-
-
 
 export default router;
