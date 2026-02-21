@@ -32,9 +32,25 @@ export class PicoAudioService {
     }
   }
 
-  private generateSpectrogram(wav: string, png: string) {
+  private async generateSpectrogram(wav: string, png: string) {
+    const tempWav = wav.replace(".wav", "_temp.wav");
+    await new Promise<void>((resolve, reject) => {
+      const ffmpeg = spawn("ffmpeg", [
+        "-y",
+        "-i",
+        wav,
+        "-af",
+        "highpass=f=80,aresample=48000",
+        "-ac",
+        "2",
+        tempWav,
+      ]);
+
+      ffmpeg.on("close", (code) =>
+        code === 0 ? resolve() : reject(new Error("ffmpeg temp fail")),
+      );
+    });
     return new Promise<void>((resolve, reject) => {
-      
       // const ffmpeg = spawn("ffmpeg", [
       //   "-y",
       //   "-i", wav,
@@ -43,12 +59,21 @@ export class PicoAudioService {
       //   png,
       // ]);
 
+      // const ffmpeg = spawn("ffmpeg", [
+      //   "-y",
+      //   "-i", wav,
+      //   "-af", "highpass=f=80",
+      //   "-ar", "48000",
+      //   "-ac", "2",
+      //   "-lavfi",
+      //   "showspectrumpic=s=1024x512:legend=1:scale=log:fscale=lin:win_func=hann:drange=120",
+      //   png,
+      // ]);
+
       const ffmpeg = spawn("ffmpeg", [
         "-y",
-        "-i", wav,
-        "-af", "highpass=f=80",
-        "-ar", "48000",
-        "-ac", "2",
+        "-i",
+        tempWav,
         "-lavfi",
         "showspectrumpic=s=1024x512:legend=1:scale=log:fscale=lin:win_func=hann:drange=120",
         png,
