@@ -35,11 +35,22 @@ export class PicoAudioService {
   private generateSpectrogram(wav: string, png: string) {
     return new Promise<void>((resolve, reject) => {
       
+      // const ffmpeg = spawn("ffmpeg", [
+      //   "-y",
+      //   "-i", wav,
+      //   "-lavfi",
+      //   "highpass=f=80,showspectrumpic=s=1024x512:legend=1:scale=log:fscale=lin:win_func=hann:drange=120",
+      //   png,
+      // ]);
+
       const ffmpeg = spawn("ffmpeg", [
         "-y",
         "-i", wav,
+        "-af", "highpass=f=80",
+        "-ar", "48000",
+        "-ac", "2",
         "-lavfi",
-        "highpass=f=80,showspectrumpic=s=1024x512:legend=1:scale=log:fscale=lin:win_func=hann:drange=120",
+        "showspectrumpic=s=1024x512:legend=1:scale=log:fscale=lin:win_func=hann:drange=120",
         png,
       ]);
 
