@@ -4,12 +4,13 @@ This project continuously monitors ambient noise using a connected
 microphone on a **Raspberry Pi**.\
 When a **peak sound** is detected, it records: - **1 second before** and
 **2 seconds after** the noise peak\
+
 - Converts it to **WAV format**\
 - Generates a **spectrogram (PNG)** using FFmpeg\
 - Sends the result (and noise level in dB) to an **n8n webhook**
-endpoint.
+  endpoint.
 
-------------------------------------------------------------------------
+---
 
 ## 🧩 Project Structure
 
@@ -24,50 +25,50 @@ endpoint.
     │   └── index.ts            # Entry point to start monitoring
     └── package.json
 
-------------------------------------------------------------------------
+---
 
 ## ⚙️ Requirements
 
 ### 🖥️ Hardware
 
--   Raspberry Pi (recommended: 3B, 4, or newer)
--   USB Microphone or sound card (check with `arecord -l`)
--   MicroSD card (8GB+ recommended)
--   Internet connection
+- Raspberry Pi (recommended: 3B, 4, or newer)
+- USB Microphone or sound card (check with `arecord -l`)
+- MicroSD card (8GB+ recommended)
+- Internet connection
 
 ### 🧰 Software
 
--   Node.js **v18+**
--   FFmpeg
--   ALSA (comes preinstalled on Raspberry Pi OS)
--   TypeScript / ts-node (if running source code directly)
+- Node.js **v18+**
+- FFmpeg
+- ALSA (comes preinstalled on Raspberry Pi OS)
+- TypeScript / ts-node (if running source code directly)
 
-------------------------------------------------------------------------
+---
 
 ## 📦 Installation (Raspberry Pi)
 
 1.  **Update system packages**
 
-    ``` bash
+    ```bash
     sudo apt update && sudo apt upgrade -y
     ```
 
 2.  **Install dependencies**
 
-    ``` bash
+    ```bash
     sudo apt install -y ffmpeg alsa-utils
     ```
 
 3.  **Install Node.js (v18+)**
 
-    ``` bash
+    ```bash
     curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
     sudo apt install -y nodejs
     ```
 
 4.  **Verify versions**
 
-    ``` bash
+    ```bash
     node -v
     ffmpeg -version
     arecord -l
@@ -75,18 +76,18 @@ endpoint.
 
 5.  **Clone the repository**
 
-    ``` bash
+    ```bash
     git clone <YOUR_REPO_URL>.git
     cd <REPO_NAME>
     ```
 
 6.  **Install project dependencies**
 
-    ``` bash
+    ```bash
     npm install
     ```
 
-------------------------------------------------------------------------
+---
 
 ## 🎛️ Configuration
 
@@ -94,13 +95,13 @@ If your microphone is not detected automatically, edit the audio device
 inside\
 `MicService.ts`:
 
-``` ts
+```ts
 const device = "plughw:1,7";
 ```
 
 To check available devices:
 
-``` bash
+```bash
 arecord -l
 ```
 
@@ -109,19 +110,19 @@ for example:
 
     plughw:<card>,<device>
 
-------------------------------------------------------------------------
+---
 
 ## ▶️ Run the Service
 
 ### Option 1: Using ts-node (dev mode)
 
-``` bash
+```bash
 npm run dev
 ```
 
 ### Option 2: Build and run (production)
 
-``` bash
+```bash
 npm run build
 node dist/index.js
 ```
@@ -138,14 +139,15 @@ The system will begin continuous monitoring, showing logs such as:
     🌈 Spectrogram generated: recordings/clip_2025-10-29_14-25.png
     ✅ Alert sent to n8n with spectrum: recordings/clip_2025-10-29_14-25.png
 
-------------------------------------------------------------------------
+---
 
 ## 📤 Webhook Integration
 
 By default, alerts are sent to the following test endpoint:
 
-``` ts
-const url = "https://igorramonf.app.n8n.cloud/webhook-test/8ffb90b2-e20c-417c-b088-dd72af457eb9";
+```ts
+const url =
+  "https://igorramonf.app.n8n.cloud/webhook-test/8ffb90b2-e20c-417c-b088-dd72af457eb9";
 ```
 
 Each alert includes: - **Noise level (dB)** - **Timestamp** -
@@ -154,48 +156,54 @@ Each alert includes: - **Noise level (dB)** - **Timestamp** -
 You can replace this URL with your own **n8n webhook** or any REST
 endpoint.
 
-------------------------------------------------------------------------
+---
 
 ## 🧠 Technical Details
 
-  Parameter           Description                       Default
-  ------------------- --------------------------------- ---------
-  `ALERT_DB`          dB threshold to trigger a peak    -10 dB
-  `RMS_THRESHOLD`     Background noise cutoff           250
-  `SAMPLE_RATE`       Audio sample rate                 48 kHz
-  `CHANNELS`          Number of audio channels          2
-  `PRE_BUFFER_SEC`    Seconds recorded before peak      1
-  `POST_BUFFER_SEC`   Seconds recorded after peak       2
-  `PEAK_COOLDOWN`     Minimum time between peaks (ms)   2000
+Parameter Description Default
 
-------------------------------------------------------------------------
+---
+
+`ALERT_DB` dB threshold to trigger a peak -10 dB
+`RMS_THRESHOLD` Background noise cutoff 250
+`SAMPLE_RATE` Audio sample rate 48 kHz
+`CHANNELS` Number of audio channels 2
+`PRE_BUFFER_SEC` Seconds recorded before peak 1
+`POST_BUFFER_SEC` Seconds recorded after peak 2
+`PEAK_COOLDOWN` Minimum time between peaks (ms) 2000
+
+---
 
 ## 🪵 Logs
 
 All system activity is logged via the `Logger` utility with emoji tags:
 
-  Emoji   Meaning
-  ------- ---------------------------
-  🎤      Monitoring started
-  💾      Clip saved
-  🎵      WAV generated
-  🌈      Spectrogram generated
-  🚨      Peak detected
-  ✅      Webhook sent successfully
-  🛑      Monitoring stopped
-  ⚠️      Warnings or errors
+Emoji Meaning
 
-------------------------------------------------------------------------
+---
+
+🎤 Monitoring started
+💾 Clip saved
+🎵 WAV generated
+🌈 Spectrogram generated
+🚨 Peak detected
+✅ Webhook sent successfully
+🛑 Monitoring stopped
+⚠️ Warnings or errors
+
+---
 
 ## 🧹 Files Generated
 
-  Type     Example                                  Description
-  -------- ---------------------------------------- ----------------
-  `.raw`   `recordings/clip_2025-10-29_14-25.raw`   Raw audio data
-  `.wav`   `recordings/clip_2025-10-29_14-25.wav`   Converted WAV
-  `.png`   `recordings/clip_2025-10-29_14-25.png`   Spectrogram
+Type Example Description
 
-------------------------------------------------------------------------
+---
+
+`.raw` `recordings/clip_2025-10-29_14-25.raw` Raw audio data
+`.wav` `recordings/clip_2025-10-29_14-25.wav` Converted WAV
+`.png` `recordings/clip_2025-10-29_14-25.png` Spectrogram
+
+---
 
 ## 🧩 Utilities
 
@@ -203,7 +211,7 @@ All system activity is logged via the `Logger` utility with emoji tags:
 
 Handles file conversion:
 
-``` ts
+```ts
 FFmpegUtils.convertRawToWav(rawFile, wavFile);
 FFmpegUtils.generateSpectrogram(wavFile, pngFile);
 ```
@@ -212,13 +220,13 @@ FFmpegUtils.generateSpectrogram(wavFile, pngFile);
 
 Adds color-coded and timestamped logs:
 
-``` ts
+```ts
 Logger.info("message");
 Logger.warn("message");
 Logger.error("message", err);
 ```
 
-------------------------------------------------------------------------
+---
 
 ## 🧪 Testing
 
@@ -226,15 +234,15 @@ You can trigger a manual loud sound (clap, whistle, etc.) ---\
 a new recording and spectrogram should appear under `/recordings`,\
 and an alert should be sent to your webhook.
 
-------------------------------------------------------------------------
+---
 
 ## 🚀 Next Steps
 
--   [ ] Replace Raspberry Pi mic capture with ESP32 device
--   [ ] Configure ESP32 to detect audio peaks and record ~3 seconds around each event
--   [ ] Send the raw audio buffer to the Node.js server via HTTP or WebSocket
--   [ ] Extend Node service to receive these audio buffers, save them as .raw, and perform:
-        [ ] Conversion to .wav
-        [ ] Spectrogram generation
-        [ ] Alert notification to n8n
--   [ ] tagging to identify which ESP32 sent the data# noise-monitor-api
+- [ ] Replace Raspberry Pi mic capture with ESP32 device
+- [ ] Configure ESP32 to detect audio peaks and record ~3 seconds around each event
+- [ ] Send the raw audio buffer to the Node.js server via HTTP or WebSocket
+- [ ] Extend Node service to receive these audio buffers, save them as .raw, and perform:
+      [ ] Conversion to .wav
+      [ ] Spectrogram generation
+      [ ] Alert notification to n8n
+- [ ] tagging to identify which ESP32 sent the data# noise-monitor-api

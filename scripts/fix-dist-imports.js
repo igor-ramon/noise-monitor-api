@@ -1,5 +1,5 @@
-import fs from 'fs';
-import path from 'path';
+import fs from "fs";
+import path from "path";
 
 function fixImports(dir) {
   const files = fs.readdirSync(dir);
@@ -10,8 +10,8 @@ function fixImports(dir) {
 
     if (stat.isDirectory()) {
       fixImports(fullPath);
-    } else if (file.endsWith('.js')) {
-      let content = fs.readFileSync(fullPath, 'utf-8');
+    } else if (file.endsWith(".js")) {
+      let content = fs.readFileSync(fullPath, "utf-8");
 
       content = content.replace(/from\s+['"](\..*?)['"]/g, (match, importPath) => {
         const resolvedPath = path.resolve(path.dirname(fullPath), importPath);
@@ -31,9 +31,9 @@ function fixImports(dir) {
         return match;
       });
 
-      fs.writeFileSync(fullPath, content, 'utf-8');
+      fs.writeFileSync(fullPath, content, "utf-8");
     }
   }
 }
 
-fixImports(path.resolve('dist'));
+fixImports(path.resolve("dist"));
