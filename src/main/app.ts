@@ -5,7 +5,11 @@ import multipart from "@fastify/multipart";
 
 export async function buildApp() {
   const app = Fastify({ logger: true });
-
+   app.addContentTypeParser(
+    "audio/wav",
+    { parseAs: "buffer" },
+    async (_request: any, body: Buffer) => body
+  );
   const isDev = process.env.NODE_ENV !== "production";
 
   await app.register(cors, {
