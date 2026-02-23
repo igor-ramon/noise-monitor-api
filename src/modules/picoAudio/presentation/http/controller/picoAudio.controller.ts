@@ -4,6 +4,7 @@ import { FastifyReply, FastifyRequest } from "fastify";
 export async function picoAudioController(request: FastifyRequest, reply: FastifyReply) {
   try {
     const parts = request.parts();
+    // const file = await request.file();
 
     let buffer: Buffer | null = null;
     let filename = "";
@@ -19,7 +20,7 @@ export async function picoAudioController(request: FastifyRequest, reply: Fastif
         device = part.value as string;
       }
     }
-
+// console.log(request, buffer, device, filename, file, 'file')
     if (!buffer) {
       return reply.code(400).send({ error: "File missing" });
     }
