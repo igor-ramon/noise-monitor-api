@@ -1,26 +1,35 @@
 import { makeProcessPicoAudioUseCase } from "@main/container/picoAudio.container";
 import { FastifyReply, FastifyRequest } from "fastify";
 
-export async function picoAudioController(request: FastifyRequest, reply: FastifyReply) {
+export async function picoAudioController(
+  request: FastifyRequest,
+  reply: FastifyReply
+) {
   try {
-    const parts = request.parts();
-    // const file = await request.file();
-
     let buffer: Buffer | null = null;
-    let filename = "";
+    let filename = `iot_${Date.now()}.wav`;
     let device: string | undefined;
 
-    for await (const part of parts) {
-      if (part.type === "file") {
-        buffer = await part.toBuffer();
-        filename = part.filename;
-      }
+    if (request.isMultipart?.()) {
+      const parts = request.parts();
 
-      if (part.type === "field" && part.fieldname === "device") {
-        device = part.value as string;
+      for await (const part of parts) {
+        if (part.type === "file") {
+          buffer = await part.toBuffer();
+          filename = part.filename;
+        }
+
+        if (part.type === "field" && part.fieldname === "device") {
+          device = part.value as string;
+        }
       }
     }
-// console.log(request, buffer, device, filename, file, 'file')
+
+    else {
+      buffer = request.body as Buffer;
+      device = request.headers["x-device-id"] as string | undefined;
+    }
+
     if (!buffer) {
       return reply.code(400).send({ error: "File missing" });
     }
@@ -29,7 +38,7 @@ export async function picoAudioController(request: FastifyRequest, reply: Fastif
 
     const result = await useCase.execute({
       buffer,
-      filename: filename,
+      filename,
       device,
     });
 
