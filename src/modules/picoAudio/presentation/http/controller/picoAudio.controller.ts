@@ -43,7 +43,7 @@ export async function picoAudioController(
     });
 
     return reply.send({
-      spectrogramPath: result,
+      spectrogramPath: result.spectrogramPath,
     });
   } catch (err) {
     console.error(err);
