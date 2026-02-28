@@ -51,7 +51,7 @@ export class FfmpegAudioProcessor implements AudioProcessor {
         "-i",
         wav,
         "-lavfi",
-        "showspectrumpic=s=1024x512:legend=1:scale=log:fscale=lin:win_func=hann:drange=180",
+        "showspectrumpic=s=1024x512:legend=1:scale=log:fscale=lin:win_func=hann:drange=150",
         png,
       ]);
 

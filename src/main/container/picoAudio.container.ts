@@ -1,3 +1,4 @@
+import { ClearRecordingsUseCase } from "@modules/picoAudio/application/useCases/ClearRecordingsUseCase";
 import { DownloadSpectrogramUseCase } from "../../modules/picoAudio/application/useCases/DownloadSpectrogramUseCase";
 import { ProcessPicoAudioUseCase } from "../../modules/picoAudio/application/useCases/ProcessPicoAudioUseCase";
 import { FfmpegAudioProcessor } from "../../modules/picoAudio/infrastructure/audio/FfmpegAudioProcessor";
@@ -12,4 +13,8 @@ export function makeProcessPicoAudioUseCase() {
 
 export function makeDownloadSpectrogramUseCase() {
   return new DownloadSpectrogramUseCase(storage);
+}
+
+export function makeClearRecordingsUseCase() {
+  return new ClearRecordingsUseCase(storage);
 }
